@@ -7,6 +7,9 @@ import com.springboot.blog.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -16,21 +19,18 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        // Dto to Entity
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
-
+        Post post = postDto.toEntity();
         Post newPost = postRepository.save(post);
-
-        // Entity to Dto
-        PostDto postResponse = new PostDto();
-        postResponse.setId(newPost.getId());
-        postResponse.setTitle(newPost.getTitle());
-        postResponse.setContent(newPost.getContent());
-        postResponse.setDescription(newPost.getDescription());
-
+        PostDto postResponse = newPost.toDto();
         return postResponse;
+    }
+
+    @Override
+    public List<PostDto> getAllPosts() {
+
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(Post::toDto)
+                .collect(Collectors.toList());
     }
 }
