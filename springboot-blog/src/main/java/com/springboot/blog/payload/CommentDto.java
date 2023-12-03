@@ -1,13 +1,16 @@
 package com.springboot.blog.payload;
 
 import com.springboot.blog.entity.Comment;
-import com.springboot.blog.entity.Post;
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommentDto {
 
     private long id;
@@ -15,13 +18,8 @@ public class CommentDto {
     private String email;
     private String body;
 
-    public Comment toEntity(){
-        return Comment.builder()
-                .id(this.id)
-                .name(this.name)
-                .email(this.email)
-                .body(this.body)
-                .build();
+    private static ModelMapper mapper = new ModelMapper();
+    public static CommentDto of(Comment comment){
+        return mapper.map(comment,CommentDto.class);
     }
-
 }

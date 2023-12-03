@@ -7,10 +7,12 @@ import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,15 +20,15 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
-
+    private ModelMapper modelMapper;
     private PostRepository postRepository;
 
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        Post post = postDto.toEntity();
+        Post post = Post.of(postDto);
         Post newPost = postRepository.save(post);
-        PostDto postResponse = newPost.toDto();
+        PostDto postResponse = PostDto.of(newPost);
         return postResponse;
     }
 
@@ -39,7 +41,7 @@ public class PostServiceImpl implements PostService {
         List<Post> postList = posts.getContent();
 
         List<PostDto> postDtoList = postList.stream()
-                .map(Post::toDto)
+                .map(PostDto::of)
                 .collect(Collectors.toList());
 
         return PostResponse.builder()
@@ -55,7 +57,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto getPostById(long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-        return post.toDto();
+        return PostDto.of(post);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class PostServiceImpl implements PostService {
         post.setDescription(post.getDescription());
 
         Post updatedPost = postRepository.save(post);
-        return updatedPost.toDto();
+        return PostDto.of(updatedPost);
     }
 
     @Override

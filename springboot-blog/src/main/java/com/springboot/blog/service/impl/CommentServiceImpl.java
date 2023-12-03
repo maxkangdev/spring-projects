@@ -9,6 +9,7 @@ import com.springboot.blog.repository.CommentRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.CommentService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,24 +21,24 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
-
+    private ModelMapper modelMapper;
     private CommentRepository commentRepository;
     private PostRepository postRepository;
 
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {
-        Comment comment = commentDto.toEntity();
+        Comment comment = Comment.of(commentDto);
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
         comment.setPost(post);
         Comment newComment = commentRepository.save(comment);
-        return newComment.toDto();
+        return CommentDto.of(newComment);
     }
 
     @Override
     public List<CommentDto> getCommentsByPostId(long postId) {
-        List<CommentDto> comments = commentRepository.findByPostId(postId).stream().map(Comment::toDto).collect(Collectors.toList());
+        List<CommentDto> comments = commentRepository.findByPostId(postId).stream().map(CommentDto::of).collect(Collectors.toList());
         return comments;
     }
 
@@ -51,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belongs to post");
         }
 
-        return comment.toDto();
+        return CommentDto.of(comment);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setBody(commentRequest.getBody());
 
         Comment updatedComment = commentRepository.save(comment);
-        return updatedComment.toDto();
+        return CommentDto.of(updatedComment);
     }
 
     @Override

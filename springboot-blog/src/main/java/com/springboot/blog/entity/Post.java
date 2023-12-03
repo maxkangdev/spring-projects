@@ -2,12 +2,14 @@ package com.springboot.blog.entity;
 
 
 import com.fasterxml.jackson.databind.annotation.EnumNaming;
+import com.springboot.blog.payload.CommentDto;
 import com.springboot.blog.payload.PostDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,12 +42,8 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
-    public PostDto toDto(){
-        return PostDto.builder()
-                .id(this.id)
-                .title(this.title)
-                .description(this.description)
-                .content(this.content)
-                .build();
+    private static ModelMapper mapper = new ModelMapper();
+    public static Post of(PostDto postDto){
+        return mapper.map(postDto,Post.class);
     }
 }

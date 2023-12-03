@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.ui.ModelMap;
 
 @Data
 @AllArgsConstructor
@@ -28,12 +30,8 @@ public class Comment {
     @JoinColumn(name="post_id", nullable = false)
     private Post post;
 
-    public CommentDto toDto(){
-        return CommentDto.builder()
-                .id(this.id)
-                .name(this.name)
-                .email(this.email)
-                .body(this.body)
-                .build();
+    private static ModelMapper mapper = new ModelMapper();
+    public static Comment of(CommentDto commentDto){
+        return mapper.map(commentDto,Comment.class);
     }
 }
