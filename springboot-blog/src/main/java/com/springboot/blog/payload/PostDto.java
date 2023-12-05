@@ -2,17 +2,13 @@ package com.springboot.blog.payload;
 
 
 import com.springboot.blog.entity.Post;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 
-@Data
+import java.util.Set;
+
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +17,7 @@ public class PostDto {
     private String title;
     private String description;
     private String content;
+    private Set<CommentDto> comments;
 
     private static ModelMapper mapper = new ModelMapper();
     public static PostDto of(Post post){
