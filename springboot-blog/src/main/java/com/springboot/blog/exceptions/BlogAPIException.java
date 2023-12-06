@@ -1,7 +1,10 @@
 package com.springboot.blog.exceptions;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+
+@Getter
 public class BlogAPIException extends RuntimeException{
 
     private HttpStatus status;
