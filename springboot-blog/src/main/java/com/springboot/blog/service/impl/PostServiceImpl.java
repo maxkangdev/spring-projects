@@ -28,8 +28,7 @@ public class PostServiceImpl implements PostService {
 
         Post post = Post.of(postDto);
         Post newPost = postRepository.save(post);
-        PostDto postResponse = PostDto.of(newPost);
-        return postResponse;
+        return PostDto.of(newPost);
     }
 
     @Override
