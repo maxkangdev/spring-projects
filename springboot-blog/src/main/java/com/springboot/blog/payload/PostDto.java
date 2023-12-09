@@ -31,6 +31,7 @@ public class PostDto {
     @NotNull
     private String content;
     private Set<CommentDto> comments;
+    private Long categoryId;
 
     private static ModelMapper mapper = new ModelMapper();
     public static PostDto of(Post post){

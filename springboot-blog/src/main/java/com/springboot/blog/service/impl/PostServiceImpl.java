@@ -1,9 +1,11 @@
 package com.springboot.blog.service.impl;
 
+import com.springboot.blog.entity.Category;
 import com.springboot.blog.entity.Post;
 import com.springboot.blog.exceptions.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.payload.PostResponse;
+import com.springboot.blog.repository.CategoryRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import lombok.AllArgsConstructor;
@@ -22,11 +24,15 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
     private ModelMapper modelMapper;
     private PostRepository postRepository;
+    private CategoryRepository categoryRepository;
 
     @Override
     public PostDto createPost(PostDto postDto) {
+        Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("category", "id", postDto.getCategoryId()));
 
         Post post = Post.of(postDto);
+        post.setCategory(category);
+
         Post newPost = postRepository.save(post);
         return PostDto.of(newPost);
     }
@@ -62,13 +68,21 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("category", "id", postDto.getCategoryId()));
 
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setDescription(post.getDescription());
+        post.setCategory(category);
 
         Post updatedPost = postRepository.save(post);
         return PostDto.of(updatedPost);
+    }
+
+    @Override
+    public List<PostDto> getPostsByCategory(Long categoryId) {
+        categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("category", "id", categoryId));
+        return postRepository.findByCategoryId(categoryId).stream().map(post -> PostDto.of(post)).collect(Collectors.toList());
     }
 
     @Override

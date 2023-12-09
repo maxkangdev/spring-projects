@@ -40,6 +40,10 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     private static ModelMapper mapper = new ModelMapper();
     public static Post of(PostDto postDto){
         return mapper.map(postDto,Post.class);
