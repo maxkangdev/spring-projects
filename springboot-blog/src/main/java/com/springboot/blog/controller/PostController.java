@@ -19,7 +19,7 @@ import java.util.List;
 import static com.springboot.blog.utils.AppConstants.*;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/v1/posts")
 @AllArgsConstructor
 @Tag(name = "CRUD REST APIs for Post Resource")
 public class PostController {
