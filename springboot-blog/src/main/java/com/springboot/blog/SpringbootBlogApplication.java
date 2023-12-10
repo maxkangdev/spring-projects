@@ -1,16 +1,21 @@
 package com.springboot.blog;
 
+import com.springboot.blog.entity.Role;
+import com.springboot.blog.repository.RoleRepository;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.lang.annotation.Inherited;
+import java.util.Optional;
 
 @SpringBootApplication
 @OpenAPIDefinition(
@@ -33,7 +38,7 @@ import java.lang.annotation.Inherited;
 				url = "https://github.com/maxkangdev/spring-projects"
 		)
 )
-public class SpringbootBlogApplication {
+public class SpringbootBlogApplication implements CommandLineRunner {
 
 	@Bean
 	public ModelMapper mapper(){
@@ -44,4 +49,26 @@ public class SpringbootBlogApplication {
 		SpringApplication.run(SpringbootBlogApplication.class, args);
 	}
 
+	@Autowired
+	private RoleRepository roleRepository;
+
+	@Override
+	public void run(String... args) throws Exception {
+
+		// insert ROLE_ADMIN to DB application startup
+		Optional<Role> roleAdmin = roleRepository.findByName("ROLE_ADMIN");
+		if(roleAdmin.isEmpty()){
+			Role adminRole = new Role();
+			adminRole.setName("ROLE_ADMIN");
+			roleRepository.save(adminRole);
+		}
+
+		// insert ROLE_ADMIN to DB application startup
+		Optional<Role> roleUser = roleRepository.findByName("ROLE_USER");
+		if(roleUser.isEmpty()){
+			Role userRole = new Role();
+			userRole.setName("ROLE_USER");
+			roleRepository.save(userRole);
+		}
+	}
 }
