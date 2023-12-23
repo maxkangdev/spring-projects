@@ -23,6 +23,7 @@ public class Employee {
     private String lastName;
     @Column(nullable = false, unique = true)
     private String email;
+    private String departmentCode;
 
     private static ModelMapper mapper = new ModelMapper();
     public static Employee of(EmployeeDto employeeDto){
