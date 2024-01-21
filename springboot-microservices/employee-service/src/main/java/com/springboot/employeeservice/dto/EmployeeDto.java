@@ -17,6 +17,7 @@ public class EmployeeDto {
     private String lastName;
     private String email;
     private String departmentCode;
+    private String organizationCode;
 
     private static ModelMapper mapper = new ModelMapper();
     public static EmployeeDto of(Employee employee){

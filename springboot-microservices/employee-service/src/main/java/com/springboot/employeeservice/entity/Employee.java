@@ -24,6 +24,7 @@ public class Employee {
     @Column(nullable = false, unique = true)
     private String email;
     private String departmentCode;
+    private String organizationCode;
 
     private static ModelMapper mapper = new ModelMapper();
     public static Employee of(EmployeeDto employeeDto){

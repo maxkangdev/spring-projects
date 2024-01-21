@@ -3,21 +3,19 @@ package com.springboot.employeeservice.service.impl;
 import com.springboot.employeeservice.dto.APIResponseDto;
 import com.springboot.employeeservice.dto.DepartmentDto;
 import com.springboot.employeeservice.dto.EmployeeDto;
+import com.springboot.employeeservice.dto.OrganizationDto;
 import com.springboot.employeeservice.entity.Employee;
 import com.springboot.employeeservice.repository.EmployeeRepository;
-import com.springboot.employeeservice.service.APIClient;
+import com.springboot.employeeservice.service.DepartmentServiceAPIClient;
 import com.springboot.employeeservice.service.EmployeeService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.springboot.employeeservice.service.OrganizationServiceAPIClient;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.awt.*;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +25,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     //    private RestTemplate restTemplate;
     private WebClient webClient;
-//    private APIClient apiClient;
+    private DepartmentServiceAPIClient departmentServiceApiClient;
+    private OrganizationServiceAPIClient organizationServiceAPIClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -49,17 +48,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        ResponseEntity<DepartmentDto> responseEntity = restTemplate.getForEntity("http://localhost:8080/api/departments/" + employee.getDepartmentCode(), DepartmentDto.class);
 //        DepartmentDto departmentDto = responseEntity.getBody();
 
-        DepartmentDto departmentDto = webClient.get().uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-                .retrieve()
-                .bodyToMono(DepartmentDto.class)
-                .block();
+//        DepartmentDto departmentDto = webClient.get().uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+//                .retrieve()
+//                .bodyToMono(DepartmentDto.class)
+//                .block();
 
-//        ResponseEntity<DepartmentDto> responseEntity = apiClient.getDepartment(employee.getDepartmentCode());
-//        DepartmentDto departmentDto = responseEntity.getBody();
+        ResponseEntity<DepartmentDto> departmentDtoResponseEntity = departmentServiceApiClient.getDepartment(employee.getDepartmentCode());
+        DepartmentDto departmentDto = departmentDtoResponseEntity.getBody();
+
+//        OrganizationDto organizationDto = webClient.get()
+//                .uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+//                .retrieve()
+//                .bodyToMono(OrganizationDto.class)
+//                .block();
+//        ResponseEntity<OrganizationDto> responseEntity = restTemplate.getForEntity("http://localhost:8083/api/organizations/" + employee.getOrganizationCode(), OrganizationDto.class);
+//        OrganizationDto organizationDto = responseEntity.getBody();
+
+        ResponseEntity<OrganizationDto> organizationDtoResponseEntity = organizationServiceAPIClient.getOrganization(employee.getOrganizationCode());
+        OrganizationDto organizationDto = organizationDtoResponseEntity.getBody();
 
         APIResponseDto apiResponseDto = new APIResponseDto();
         apiResponseDto.setEmployeeDto(EmployeeDto.of(employee));
         apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setOrganizationDto(organizationDto);
 
         return apiResponseDto;
     }
