@@ -1,13 +1,35 @@
 ## What were utilized in this project?
 
 
-::: mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-:::
+```mermaid
+flowchart TB
+    A[REACT / CLIENT] --> API
+    G[Github]
+    SR[Service Registry]
+    R[Rabbit MQ]
+    API --> microservices
+    call[call /burstRefresh] --> RabbitMQ --> microservices
+    
+
+    subgraph EC[services]
+    API[API GAETWAY]
+    CF[Config Server]
+    microservices
+    end
+
+    subgraph microservices
+    E[EMPLOYEE / mysql] ~~~ D[DEPARTMENT / mysql]
+    E ~~~ O[ORGANIZATION / mysql]
+    end
+
+    microservices --> |GET CONFIG of Each Microservice|CF
+    CF --> G
+
+    EC --> a([Register as Eureka Client]) --> SR
+
+    EC --> b([Tracing]) --> Z[Zipkin Server]
+
+```
 
 
 
